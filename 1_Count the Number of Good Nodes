@@ -1,49 +1,55 @@
+// https://leetcode.com/problems/count-the-number-of-good-nodes/description/
+
 class Solution {
 public:
-    int goodnodes ;
-    int dfs(vector<vector<int>> &adj , int node , int parent)
-    {
-        int total = 0 ;
-        bool isvalid = true ;
-        int subTree = -1 ;
-        
-        // traversing in another nodes
-        for(auto it : adj[node])
-        {
-            if(it == parent)
-            continue ;
+    int goodnodes ;  // This variable keeps track of the number of "good nodes".
 
-            int curr = dfs(adj , it , node) ;
+    // Depth-First Search (DFS) function
+    int dfs(vector<vector<int>> &adj , int node , int parent) {
+        int total = 0 ;  // This keeps the total number of nodes in the current subtree.
+        bool isvalid = true ;  // This flag checks if the current node is a "good node".
+        int subTree = -1 ;  // This variable stores the size of the first child's subtree.
 
-            if(subTree == -1)
-            subTree = curr ;
+        // Traverse all the adjacent nodes of the current node
+        for(auto it : adj[node]) {
+            if(it == parent) {  // Skip the parent node to avoid revisiting
+                continue ;
+            }
+            int curr = dfs(adj , it , node) ;  // Recursively perform DFS on the child node and get the subtree size.
 
-            else if(subTree != curr)
-            isvalid = false ;
-
-            total += curr ;
+            if(subTree == -1) {  // If this is the first child, store its subtree size.
+                subTree = curr ;
+            }
+            // If a child node's subtree size does not match the first child's subtree size
+            // it means that the current node cannot be considered a "good node".
+            else if(subTree != curr) {
+                isvalid = false ;
+            }
+            total += curr ;  // Accumulate the total number of nodes in the subtree.
         }
-        if(isvalid)
-        goodnodes++ ;
 
-        return total + 1 ;  // self + all except self nodes
+        // If all child nodes have the same subtree size, mark this node as a "good node".
+        if(isvalid == true) {
+            goodnodes++ ;
+        }
+        return total + 1 ;  // Return the size of the current subtree (including the current node).
     }
+
     int countGoodNodes(vector<vector<int>>& edges) {
-        int n = edges.size() ;
+        int n = edges.size() ;  // Number of edges in the tree.
 
-        // conversion to adjacency matrix
-        vector<vector<int>>adj(n+1);
+        // Convert the edge list to an adjacency list representation.
+        vector<vector<int>> adj(n + 1);
 
-        for(int i = 0 ; i < n ; ++i)
-        {
-            adj[edges[i][0]].push_back(edges[i][1]) ;
-            adj[edges[i][1]].push_back(edges[i][0]) ;
+        for(int i = 0 ; i < n ; ++i) {
+            adj[edges[i][0]].push_back(edges[i][1]) ;  // Add the edge to the adjacency list.
+            adj[edges[i][1]].push_back(edges[i][0]) ;  // Add the reverse edge since it's an undirected graph.
         }
 
-        goodnodes = 0 ;
+        goodnodes = 0 ;  // Initialize the count of good nodes to zero.
 
-        dfs(adj , 0 , -1) ;
+        dfs(adj , 0 , -1) ;  // Start DFS from node 0 (assuming 0-based indexing), with no parent (-1).
 
-        return goodnodes ;
+        return goodnodes ;  // Return the total number of "good nodes".
     }
 };
