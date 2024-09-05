@@ -1,0 +1,87 @@
+// https://www.geeksforgeeks.org/problems/topological-sort/1
+
+#include <bits/stdc++.h>
+using namespace std;
+
+// } Driver Code Ends
+class Solution
+{
+public:
+    // Function to detect cycle in a directed graph.
+    bool isCyclic(int V, vector<int> adj[])
+    {
+        queue<int> q;
+
+        vector<int> indegree(V, 0);
+
+        for (int u = 0; u < V; ++u)
+        {
+            for (auto &v : adj[u])
+            {
+                indegree[v]++;
+            }
+        }
+
+        for (int u = 0; u < V; ++u)
+        {
+            if (indegree[u] == 0)
+            {
+                q.push(u);
+            }
+        }
+
+        vector<int> res;
+
+        while (!q.empty())
+        {
+            int curr = q.front();
+            res.push_back(curr);
+            q.pop();
+
+            for (int &v : adj[curr])
+            {
+                indegree[v]--;
+                if (indegree[v] == 0)
+                {
+                    q.push(v);
+                }
+            }
+        }
+
+        if (res.size() == V)
+        {
+            return 0;
+        }
+        return 1;
+    }
+};
+
+//{ Driver Code Starts.
+
+int main()
+{
+
+    int t;
+    cin >> t;
+    while (t--)
+    {
+        int V, E;
+        cin >> V >> E;
+
+        vector<int> adj[V];
+
+        for (int i = 0; i < E; i++)
+        {
+            int u, v;
+            cin >> u >> v;
+            adj[u].push_back(v);
+        }
+
+        Solution obj;
+        cout << obj.isCyclic(V, adj) << "\n";
+    }
+
+    return 0;
+}
+
+// } Driver Code Ends
