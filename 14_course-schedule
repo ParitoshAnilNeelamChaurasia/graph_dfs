@@ -1,0 +1,53 @@
+// https://leetcode.com/problems/course-schedule/description/
+
+class Solution {
+public:
+    int n ;
+
+    bool f(unordered_map<int,vector<int>> &mp , int u , vector<bool> &inRecursion , vector<bool> &visited , int num)
+    {
+        visited[u] = true ;
+        inRecursion[u] = true ;
+
+        for(int &v : mp[u])
+        {
+            if(!visited[v] && f(mp , v , inRecursion , visited , num))
+            {
+                return true ;
+            }
+            else if(inRecursion[v] == true)
+            {
+                return true ;
+            }
+        }
+        inRecursion[u] = false ;
+        return false ;
+    }
+    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
+        n = prerequisites.size() ;
+
+        unordered_map<int,vector<int>> mp ;
+
+        for(int i = 0 ; i < n ; ++i)
+        {
+            int a = prerequisites[i][0] ;
+            int b = prerequisites[i][1] ;
+
+            // b->a
+            mp[b].push_back(a) ;
+        }
+
+        vector<bool> inRecursion(numCourses,false) ;
+        vector<bool> visited(numCourses,false) ;
+
+        for(int i = 0 ; i < numCourses ; ++i)
+        {
+            if(visited[i] == false && f(mp , i , inRecursion , visited , numCourses)) 
+            {
+                return false ;  // can't complete all the courses
+            }
+        }
+
+        return true ;
+    }
+};
