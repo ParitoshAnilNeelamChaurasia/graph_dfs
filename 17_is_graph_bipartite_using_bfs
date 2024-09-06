@@ -1,0 +1,51 @@
+// https://leetcode.com/problems/is-graph-bipartite/
+
+class Solution {
+public:
+    int n ;
+
+    bool bfs(vector<vector<int>>& graph , int u , vector<int> &color , int curr_color)
+    {
+        queue<int> q ;
+        q.push(u) ;
+        color[u] = curr_color ;
+
+        while(!q.empty())
+        {
+            int node = q.front() ;
+            q.pop() ;
+
+            for(auto &v : graph[node])
+            {
+                if(color[v] == color[node])
+                {
+                    return false ;
+                }
+
+                else if(color[v] == -1)
+                {
+                    color[v] = 1 - color[node] ;
+                    q.push(v) ;
+                }
+            }
+        }
+        return true ;
+    }
+    bool isBipartite(vector<vector<int>>& graph) {
+        n = graph.size() ;
+
+        vector<int> color(n,-1) ;
+
+        for(int i = 0 ; i < n ; ++i)
+        {
+            if(color[i] == -1)
+            {
+                if(bfs(graph , i , color , 1) == false)
+                {
+                    return false ;
+                }
+            }
+        }
+        return true ;
+    }
+};
